@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity
     Switch switchButton;
     Bitmap bm;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                /* Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-                //dbAdapter.deleteAll();
+               // dbAdapter.deleteAll();
                 dialog = new Dialog(MainActivity.this);
                 dialog.setContentView(R.layout.alert_dialog);
                 alertDialogIcon = (ImageView) dialog.findViewById(R.id.dialogImage);
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(View view) {
                         String title1 = title.getText().toString();
                         String question1 = question.getText().toString();
-                        dbAdapter.addItem(title1, question1, picturePath,0);
+                        dbAdapter.addItem(title1, question1, R.drawable.vlatko,1);
 
                         mainIcon = (ImageView) findViewById(R.id.imageViewIcon);
                         switchButton = (Switch) findViewById(R.id.switchButton);
@@ -166,6 +167,7 @@ public class MainActivity extends AppCompatActivity
         allItems = dbAdapter.selectAllItems();
         adapter = new RecyclerViewMainAdapter(allItems,this);
         recyclerView.setAdapter(adapter);
+
     }
 
 

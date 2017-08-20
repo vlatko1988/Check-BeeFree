@@ -38,7 +38,7 @@ public class SQLite
 
 
 
-    public void addItem(String title, String question,String image, int switchButton)
+    public void addItem(String title, String question, int image, int switchButton)
     {
         ContentValues cv = new ContentValues();
         cv.put("title", title);
@@ -46,6 +46,13 @@ public class SQLite
         cv.put("image", image);
         cv.put("switchButton", switchButton);
         mSqLiteDatabase.insert("items", null, cv);
+    }
+    public void updateSwitch(int id,int switchButton)
+    {
+        ContentValues updateSwitch = new ContentValues();
+        updateSwitch.put("switchButton", switchButton);
+
+        mSqLiteDatabase.update("items",updateSwitch,"_id"+ id,null);
     }
 
     public List<RecyclerListItem> selectAllItems()
@@ -59,7 +66,7 @@ public class SQLite
         {
             do
             {
-                RecyclerListItem listItem1 = new RecyclerListItem(cursor.getString(1),cursor.getString(2),cursor.getString(3));
+                RecyclerListItem listItem1 = new RecyclerListItem(cursor.getString(1),cursor.getString(2),cursor.getInt(3),cursor.getInt(4));
                 allItems.add(listItem1);
 
             }
@@ -85,7 +92,7 @@ public class SQLite
         @Override
         public void onCreate(SQLiteDatabase db)
         {
-            String query = "CREATE TABLE items(id integer primary key autoincrement, title text, question text, image text, switchButton integer);";
+            String query = "CREATE TABLE items(id integer primary key autoincrement, title text, question text, image integer, switchButton integer);";
             db.execSQL(query);
         }
 

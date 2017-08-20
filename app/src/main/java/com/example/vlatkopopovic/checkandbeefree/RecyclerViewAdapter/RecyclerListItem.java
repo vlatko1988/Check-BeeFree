@@ -1,5 +1,8 @@
 package com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter;
 
+import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
+import com.squareup.picasso.Picasso;
+
 /**
  * Created by Vlatko Popovic on 19-Aug-17.
  */
@@ -8,16 +11,16 @@ public class RecyclerListItem {
 
     String title;
     String question;
-    String image;
+    int image;
     int switchButton;
 
-    public RecyclerListItem(String title, String question, String image, int switchButton) {
+    public RecyclerListItem(String title, String question, int image, int switchButton) {
         this.title = title;
         this.question = question;
         this.image = image;
         this.switchButton = switchButton;
     }
-    public RecyclerListItem(String title, String question, String image) {
+    public RecyclerListItem(String title, String question, int image) {
         this.title = title;
         this.question = question;
         this.image = image;
@@ -28,6 +31,14 @@ public class RecyclerListItem {
         this.question = question;
 
 
+    }
+
+    public int getImage() {
+        return image;
+    }
+
+    public void setImage(int image) {
+        this.image = image;
     }
 
     public String getTitle() {
@@ -46,13 +57,7 @@ public class RecyclerListItem {
         this.question = question;
     }
 
-    public String getImage() {
-        return image;
-    }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
 
     public int getSwitchButton() {
         return switchButton;
