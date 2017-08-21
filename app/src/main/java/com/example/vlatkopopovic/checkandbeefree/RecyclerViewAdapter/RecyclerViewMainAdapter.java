@@ -42,8 +42,8 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        RecyclerListItem listItem = listItems.get(position);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final RecyclerListItem listItem = listItems.get(position);
         holder.title.setText(listItem.getTitle());
         holder.question.setText(listItem.getQuestion());
         Picasso.with(context).load(listItem.getImage()).into(holder.image);
@@ -63,13 +63,14 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
-                    Toast.makeText(context,"Checked",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,listItem.getTitle(),Toast.LENGTH_SHORT).show();
+
 
                 }
 
                 else{
 
-                    Toast.makeText(context,"Unchecked",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,listItem.getTitle(),Toast.LENGTH_SHORT).show();
 
                 }
             }
@@ -95,6 +96,8 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
             question = (TextView) itemView.findViewById(R.id.textViewQuestion);
             image = (ImageView) itemView.findViewById(R.id.imageViewIcon);
             switchButton = (Switch) itemView.findViewById(R.id.switchButton);
+
+
 
         }
     }

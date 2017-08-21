@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity
                 title = (EditText) dialog.findViewById(R.id.editTextTitle);
                 question = (EditText) dialog.findViewById(R.id.editTextQuestion);
                 add = (Button) dialog.findViewById(R.id.buttonAdd);
+                cancel = (Button) dialog.findViewById(R.id.buttonCancel);
                 alertDialogIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -127,6 +128,12 @@ public class MainActivity extends AppCompatActivity
                         loadList();
                         dialog.dismiss();
                         picturePath = "";
+                    }
+                });
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
                     }
                 });
 
@@ -167,6 +174,7 @@ public class MainActivity extends AppCompatActivity
         allItems = dbAdapter.selectAllItems();
         adapter = new RecyclerViewMainAdapter(allItems,this);
         recyclerView.setAdapter(adapter);
+
 
     }
 
