@@ -46,13 +46,12 @@ public class SQLite
         cv.put("image", image);
         cv.put("switchButton", switchButton);
         mSqLiteDatabase.insert("items", null, cv);
+
     }
     public void updateSwitch(int switchButton, String title)
     {
-        ContentValues updateSwitch = new ContentValues();
-        updateSwitch.put("switchButton", switchButton);
+        mSqLiteDatabase.execSQL("update items set switchButton='" + switchButton + "'where title='" + title + "'");
 
-        mSqLiteDatabase.update("items",updateSwitch,"title"+ title,null);
     }
 
     public List<RecyclerListItem> selectAllItems()

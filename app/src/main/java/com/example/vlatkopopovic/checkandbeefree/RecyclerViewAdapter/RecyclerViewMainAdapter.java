@@ -1,8 +1,7 @@
 package com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
+import com.example.vlatkopopovic.checkandbeefree.MainActivity;
 import com.example.vlatkopopovic.checkandbeefree.R;
 import com.squareup.picasso.Picasso;
 
@@ -28,10 +28,12 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
     List<RecyclerListItem> listItems;
     Context context;
     private SQLite dbAdapter;
+    public static final String PREFS_NAME = "MyPrefsFile";
 
     public RecyclerViewMainAdapter(List<RecyclerListItem> listItems, Context context) {
         this.listItems = listItems;
         this.context = context;
+
     }
 
     @Override
@@ -47,7 +49,7 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
         holder.title.setText(listItem.getTitle());
         holder.question.setText(listItem.getQuestion());
         Picasso.with(context).load(listItem.getImage()).into(holder.image);
-        switch (listItem.getSwitchButton()){
+        switch (listItem.getSwitchButton()) {
             case 0:
                 holder.switchButton.setChecked(false);
                 break;
@@ -61,23 +63,27 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
 
 
         holder.switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b){
-                    Toast.makeText(context,"Checked",Toast.LENGTH_SHORT).show();
+                if (b) {
+                    //Toast.makeText(context,listItem.getTitle(),Toast.LENGTH_SHORT).show();
+                    initializeDatabase();
+                    dbAdapter.updateSwitch(1, listItem.getTitle());
 
+                } else {
+                    initializeDatabase();
+                    dbAdapter.updateSwitch(0, listItem.getTitle());
+
+                    //Toast.makeText(context,listItem.getTitle(),Toast.LENGTH_SHORT).show();
 
                 }
 
-                else{
-
-                    Toast.makeText(context,"Unchecked",Toast.LENGTH_SHORT).show();
-
-                }
             }
         });
 
     }
+
 
     @Override
     public int getItemCount() {
@@ -99,8 +105,12 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
             switchButton = (Switch) itemView.findViewById(R.id.switchButton);
 
 
-
         }
+    }
+
+    private void initializeDatabase() {
+        dbAdapter = new SQLite(context);
+        dbAdapter.open();
     }
 }
 //holder.image.setImageResource(R.drawable.ic_menu_send);

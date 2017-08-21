@@ -38,6 +38,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Enter question"
+        android:focusable="false"
         android:inputType="textPersonName"
         app:layout_constraintLeft_toLeftOf="@+id/textViewQuestion"
         app:layout_constraintTop_toBottomOf="@+id/textViewQuestion" />

@@ -2,6 +2,7 @@ package com.example.vlatkopopovic.checkandbeefree;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,9 +26,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
 import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerListItem;
@@ -47,13 +51,15 @@ public class MainActivity extends AppCompatActivity
     RecyclerView.Adapter adapter;
     List<RecyclerListItem> listItems;
     Dialog dialog;
-    ImageView alertDialogIcon,mainIcon;
-    EditText title,question;
+    ImageView alertDialogIcon, mainIcon;
+    EditText title, question;
     Button add, cancel;
     String picturePath;
     Switch switchButton;
     Bitmap bm;
 
+
+    public static final String PREFS_NAME = "MyPrefsFile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +69,12 @@ public class MainActivity extends AppCompatActivity
         initializeDatabase();
         loadList();
 
-
-
-
-
     }
 
 
-    private void initializeViews()
-    {
+    private void initializeViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -84,7 +83,9 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                /* Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-               // dbAdapter.deleteAll();
+                // dbAdapter.deleteAll();
+
+
                 dialog = new Dialog(MainActivity.this);
                 dialog.setContentView(R.layout.alert_dialog);
                 alertDialogIcon = (ImageView) dialog.findViewById(R.id.dialogImage);
@@ -96,8 +97,6 @@ public class MainActivity extends AppCompatActivity
                 alertDialogIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-
                         /*Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         startActivityForResult(takePicture, 0);*/
 
@@ -121,7 +120,7 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(View view) {
                         String title1 = title.getText().toString();
                         String question1 = question.getText().toString();
-                        dbAdapter.addItem(title1, question1, R.drawable.vlatko,1);
+                        dbAdapter.addItem(title1, question1, R.drawable.vlatko, 0);
 
                         mainIcon = (ImageView) findViewById(R.id.imageViewIcon);
                         switchButton = (Switch) findViewById(R.id.switchButton);
@@ -133,16 +132,16 @@ public class MainActivity extends AppCompatActivity
                 cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+                       // dbAdapter.updateSwitch(1, "Sale");
                         dialog.dismiss();
                     }
                 });
 
 
-
-
-
             }
         });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -155,30 +154,26 @@ public class MainActivity extends AppCompatActivity
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-       recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setNestedScrollingEnabled(false);
 
 
-
     }
 
-    private void initializeDatabase()
-    {
+    private void initializeDatabase() {
         dbAdapter = new SQLite(MainActivity.this);
         dbAdapter.open();
+
     }
 
-    private void loadList()
-    {
+    private void loadList() {
         List<RecyclerListItem> allItems;
         allItems = dbAdapter.selectAllItems();
-        adapter = new RecyclerViewMainAdapter(allItems,this);
+        adapter = new RecyclerViewMainAdapter(allItems, this);
         recyclerView.setAdapter(adapter);
 
 
     }
-
-
 
 
     @Override
@@ -314,7 +309,6 @@ public class MainActivity extends AppCompatActivity
         return bm;
 
     }*/
-
 
 
 }
