@@ -38,7 +38,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Enter question"
-        android:focusable="false"
+
         android:inputType="textPersonName"
         app:layout_constraintLeft_toLeftOf="@+id/textViewQuestion"
         app:layout_constraintTop_toBottomOf="@+id/textViewQuestion" />
@@ -53,13 +53,16 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextTitle" />
 
     <EditText
+
         android:id="@+id/editTextTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ems="10"
+        android:focusedByDefault="true"
         android:hint="Enter title"
         android:inputType="textPersonName"
+
         app:layout_constraintLeft_toLeftOf="@+id/textViewTitle"
         app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
 

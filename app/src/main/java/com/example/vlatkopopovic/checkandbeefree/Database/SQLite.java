@@ -11,22 +11,19 @@ import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerLis
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Vlatko Popovic on 19-Aug-17.
- */
+
 
 public class SQLite
 {
     private static final String DATABASE_NAME = "data";
 
-    private Context mContext;
     private MyDBHelper mDbHelper;
     private SQLiteDatabase mSqLiteDatabase;
-    private int DATABASE_VERSION = 1;
 
     public SQLite(Context context)
     {
-        this.mContext = context;
+        //Context mContext = context;
+        int DATABASE_VERSION = 1;
         mDbHelper = new MyDBHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -54,10 +51,25 @@ public class SQLite
 
     }
 
+    public void deleteItem (String title)
+    {
+        mSqLiteDatabase.delete("items","title='"+title+"'",null);
+
+    }
+
+
+
+    public Cursor list_all_list(){
+        SQLiteDatabase db = mSqLiteDatabase;
+        return db.rawQuery("SELECT * FROM ITEMS",null);
+    }
+
+
+
+
+
     public List<RecyclerListItem> selectAllItems()
     {
-
-
 
         List<RecyclerListItem> allItems = new ArrayList<>();
         Cursor cursor = mSqLiteDatabase.query("items", null, null, null, null, null, null);
@@ -74,16 +86,11 @@ public class SQLite
         return allItems;
     }
 
-    public void deleteAll()
+
+
+    private class MyDBHelper extends SQLiteOpenHelper
     {
-
-        mSqLiteDatabase.execSQL("delete from "+ "items");
-
-    }
-
-    public class MyDBHelper extends SQLiteOpenHelper
-    {
-        public MyDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version)
+        MyDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version)
         {
             super(context, name, factory, version);
         }

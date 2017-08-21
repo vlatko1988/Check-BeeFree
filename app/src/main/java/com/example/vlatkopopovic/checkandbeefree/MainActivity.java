@@ -1,65 +1,53 @@
 package com.example.vlatkopopovic.checkandbeefree;
 
 import android.app.Dialog;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.DialogInterface;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
 import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerListItem;
 import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerViewMainAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static int RESULT_LOAD_IMAGE = 1;
 
     private SQLite dbAdapter;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
-    List<RecyclerListItem> listItems;
     Dialog dialog;
     ImageView alertDialogIcon, mainIcon;
     EditText title, question;
     Button add, cancel;
     String picturePath;
     Switch switchButton;
-    Bitmap bm;
-
-
-    public static final String PREFS_NAME = "MyPrefsFile";
+    String newString;
+    String getTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +56,17 @@ public class MainActivity extends AppCompatActivity
         initializeViews();
         initializeDatabase();
         loadList();
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras == null) {
+                newString = null;
+            } else {
+                newString = extras.getString("KURAC");
+            }
+        } else {
+            newString = (String) savedInstanceState.getSerializable("KURAC");
+        }
 
     }
 
@@ -88,12 +87,13 @@ public class MainActivity extends AppCompatActivity
 
                 dialog = new Dialog(MainActivity.this);
                 dialog.setContentView(R.layout.alert_dialog);
-                alertDialogIcon = (ImageView) dialog.findViewById(R.id.dialogImage);
+                alertDialogIcon = dialog.findViewById(R.id.dialogImage);
 
-                title = (EditText) dialog.findViewById(R.id.editTextTitle);
-                question = (EditText) dialog.findViewById(R.id.editTextQuestion);
-                add = (Button) dialog.findViewById(R.id.buttonAdd);
-                cancel = (Button) dialog.findViewById(R.id.buttonCancel);
+                title = dialog.findViewById(R.id.editTextTitle);
+                title.requestFocus();
+                question =  dialog.findViewById(R.id.editTextQuestion);
+                add =  dialog.findViewById(R.id.buttonAdd);
+                cancel = dialog.findViewById(R.id.buttonCancel);
                 alertDialogIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -112,7 +112,9 @@ public class MainActivity extends AppCompatActivity
 
                 dialog.show();
                 Window window = dialog.getWindow();
-                window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                if (window != null) {
+                    window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                }
 
 
                 add.setOnClickListener(new View.OnClickListener() {
@@ -132,8 +134,6 @@ public class MainActivity extends AppCompatActivity
                 cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-                       // dbAdapter.updateSwitch(1, "Sale");
                         dialog.dismiss();
                     }
                 });
@@ -167,11 +167,56 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadList() {
-        List<RecyclerListItem> allItems;
+        final List<RecyclerListItem> allItems;
         allItems = dbAdapter.selectAllItems();
         adapter = new RecyclerViewMainAdapter(allItems, this);
         recyclerView.setAdapter(adapter);
 
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //Remove swiped item from list and notify the RecyclerView
+
+
+                Cursor cursor = dbAdapter.list_all_list();
+                cursor.moveToPosition(viewHolder.getAdapterPosition());
+                getTitle = cursor.getString(1);
+                //Toast.makeText(MainActivity.this, broj, Toast.LENGTH_SHORT).show();
+
+                new AlertDialog.Builder(MainActivity.this)
+
+                        .setTitle("Delete")
+                        .setMessage("Are you sure?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dbAdapter.deleteItem(getTitle);
+                                loadList();
+                            }
+
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                                loadList();
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
     }
 
@@ -199,7 +244,6 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -212,7 +256,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -234,6 +278,16 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+
+
+
+
+
+
+
+
    /* @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

@@ -1,8 +1,11 @@
 package com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +31,8 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
     List<RecyclerListItem> listItems;
     Context context;
     private SQLite dbAdapter;
-    public static final String PREFS_NAME = "MyPrefsFile";
+    public static String sharedValue = null;
+    RecyclerView rv;
 
     public RecyclerViewMainAdapter(List<RecyclerListItem> listItems, Context context) {
         this.listItems = listItems;
@@ -67,15 +71,13 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    //Toast.makeText(context,listItem.getTitle(),Toast.LENGTH_SHORT).show();
+
                     initializeDatabase();
                     dbAdapter.updateSwitch(1, listItem.getTitle());
 
                 } else {
                     initializeDatabase();
                     dbAdapter.updateSwitch(0, listItem.getTitle());
-
-                    //Toast.makeText(context,listItem.getTitle(),Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -97,7 +99,7 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
         public ImageView image;
         public Switch switchButton;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.textViewTitle);
             question = (TextView) itemView.findViewById(R.id.textViewQuestion);
@@ -106,13 +108,18 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
 
 
         }
+
+
     }
+
 
     private void initializeDatabase() {
         dbAdapter = new SQLite(context);
         dbAdapter.open();
     }
 }
+
+
 //holder.image.setImageResource(R.drawable.ic_menu_send);
 
 
