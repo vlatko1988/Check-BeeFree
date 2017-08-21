@@ -56,6 +56,7 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
                 break;
             default:
                 holder.switchButton.setChecked(false);
+                break;
         }
 
 
@@ -63,14 +64,14 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
-                    Toast.makeText(context,listItem.getTitle(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,"Checked",Toast.LENGTH_SHORT).show();
 
 
                 }
 
                 else{
 
-                    Toast.makeText(context,listItem.getTitle(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,"Unchecked",Toast.LENGTH_SHORT).show();
 
                 }
             }

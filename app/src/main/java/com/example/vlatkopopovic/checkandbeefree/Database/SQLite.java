@@ -47,7 +47,7 @@ public class SQLite
         cv.put("switchButton", switchButton);
         mSqLiteDatabase.insert("items", null, cv);
     }
-    public void updateSwitch(int title, String switchButton)
+    public void updateSwitch(int switchButton, String title)
     {
         ContentValues updateSwitch = new ContentValues();
         updateSwitch.put("switchButton", switchButton);
