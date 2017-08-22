@@ -73,7 +73,8 @@ public class SQLite
 
         List<RecyclerListItem> allItems = new ArrayList<>();
         Cursor cursor = mSqLiteDatabase.query("items", null, null, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst())
+
+        if (cursor.moveToFirst())
         {
             do
             {
@@ -82,8 +83,11 @@ public class SQLite
 
             }
             while (cursor.moveToNext());
+
         }
+
         return allItems;
+
     }
 
 

@@ -46,8 +46,9 @@ public class MainActivity extends AppCompatActivity
     Button add, cancel;
     String picturePath;
     Switch switchButton;
-    String newString;
+
     String getTitle;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +58,7 @@ public class MainActivity extends AppCompatActivity
         initializeDatabase();
         loadList();
 
-        if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
-            if (extras == null) {
-                newString = null;
-            } else {
-                newString = extras.getString("KURAC");
-            }
-        } else {
-            newString = (String) savedInstanceState.getSerializable("KURAC");
-        }
+
 
     }
 
@@ -76,13 +68,12 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+         fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-                // dbAdapter.deleteAll();
+
 
 
                 dialog = new Dialog(MainActivity.this);
@@ -97,16 +88,8 @@ public class MainActivity extends AppCompatActivity
                 alertDialogIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        /*Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(takePicture, 0);*/
 
-
-                      /*Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(pickPhoto , 1);*/
-                        /*Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(i, RESULT_LOAD_IMAGE);*/
-
+                     //LOAD PICTURE FROM DRAWABLE
                     }
                 });
 
@@ -120,6 +103,8 @@ public class MainActivity extends AppCompatActivity
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+
                         String title1 = title.getText().toString();
                         String question1 = question.getText().toString();
                         dbAdapter.addItem(title1, question1, R.drawable.vlatko, 0);
@@ -129,6 +114,7 @@ public class MainActivity extends AppCompatActivity
                         loadList();
                         dialog.dismiss();
                         picturePath = "";
+
                     }
                 });
                 cancel.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +143,19 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setNestedScrollingEnabled(false);
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(dy > 0 ){
+                    if(fab.isShown()) fab.hide();
+                } else {
+                    if(!fab.isShown()) fab.show();
+                }
+            }
+        });
+
+
 
     }
 
@@ -171,6 +170,9 @@ public class MainActivity extends AppCompatActivity
         allItems = dbAdapter.selectAllItems();
         adapter = new RecyclerViewMainAdapter(allItems, this);
         recyclerView.setAdapter(adapter);
+
+
+
 
 
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
@@ -363,6 +365,14 @@ public class MainActivity extends AppCompatActivity
         return bm;
 
     }*/
+   /*Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(takePicture, 0);*/
 
+
+                      /*Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(pickPhoto , 1);*/
+                        /*Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(i, RESULT_LOAD_IMAGE);*/
 
 }
