@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity
 
     String getTitle;
     FloatingActionButton fab;
+    String test;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
