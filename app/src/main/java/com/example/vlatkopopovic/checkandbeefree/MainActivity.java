@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity
     String picturePath;
     Switch switchButton;
     int result;
+
+    List<RecyclerListItem> allItems;
 
     String getTitle;
     FloatingActionButton fab;
@@ -171,7 +174,7 @@ public class MainActivity extends AppCompatActivity
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setNestedScrollingEnabled(false);
+       // recyclerView.setNestedScrollingEnabled(false);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -187,16 +190,18 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
     }
 
     private void initializeDatabase() {
         dbAdapter = new SQLite(MainActivity.this);
         dbAdapter.open();
 
+
     }
 
     private void loadList() {
-        final List<RecyclerListItem> allItems;
+
         allItems = dbAdapter.selectAllItems();
         adapter = new RecyclerViewMainAdapter(allItems, this);
         recyclerView.setAdapter(adapter);
@@ -213,13 +218,14 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, final int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
 
 
                 Cursor cursor = dbAdapter.list_all_list();
                 cursor.moveToPosition(viewHolder.getAdapterPosition());
                 getTitle = cursor.getString(1);
+
                 //Toast.makeText(MainActivity.this, broj, Toast.LENGTH_SHORT).show();
 
                 new AlertDialog.Builder(MainActivity.this)
@@ -229,8 +235,23 @@ public class MainActivity extends AppCompatActivity
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+
+
+
+
                                 dbAdapter.deleteItem(getTitle);
-                                loadList();
+                                int position = viewHolder.getAdapterPosition();
+                                allItems.remove(position);
+                                //allItems = dbAdapter.selectAllItems();
+                                adapter.notifyItemRemoved(position);
+                               // adapter.notifyItemRangeChanged(position,allItems.size());
+                                //loadList();
+
+
+
+
+
+
                             }
 
                         })
@@ -239,7 +260,12 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialogInterface, int i) {
 
 
-                                loadList();
+                               loadList();
+
+                              /*  int position = viewHolder.getAdapterPosition();
+
+                                adapter.notifyItemInserted(position);*/
+
                                 dialogInterface.dismiss();
                             }
                         })

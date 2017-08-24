@@ -69,6 +69,7 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
                             .setAction("Action", null).show();
                     initializeDatabase();
                     dbAdapter.updateSwitch(1, listItem.getTitle());
+                    holder.switchButton.setChecked(true);
 
 
                 } else {
@@ -76,7 +77,7 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
                             .setAction("Action", null).show();
                     initializeDatabase();
                     dbAdapter.updateSwitch(0, listItem.getTitle());
-
+                    holder.switchButton.setChecked(false);
 
                 }
 
