@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
@@ -68,16 +69,22 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
                     Snackbar.make(compoundButton, listItem.getTitle() + " is set to ON", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
                     initializeDatabase();
+                    //holder.switchButton.setChecked(true);
+
                     dbAdapter.updateSwitch(1, listItem.getTitle());
-                    holder.switchButton.setChecked(true);
+                    Toast.makeText(context,"cekirano",Toast.LENGTH_SHORT).show();
+
+
 
 
                 } else {
                     Snackbar.make(compoundButton, listItem.getTitle() + " is set to OFF", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
                     initializeDatabase();
+                    //holder.switchButton.setChecked(false);
                     dbAdapter.updateSwitch(0, listItem.getTitle());
-                    holder.switchButton.setChecked(false);
+                    Toast.makeText(context,"uncekirano",Toast.LENGTH_SHORT).show();
+
 
                 }
 

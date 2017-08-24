@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -15,7 +14,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -49,7 +47,7 @@ public class MainActivity extends AppCompatActivity
     ImageView alertDialogIcon, mainIcon;
     EditText title, question;
     Button add, cancel;
-    String picturePath;
+
     Switch switchButton;
     int result;
 
@@ -57,7 +55,7 @@ public class MainActivity extends AppCompatActivity
 
     String getTitle;
     FloatingActionButton fab;
-    String test;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,12 +74,11 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-         fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 
 
                 dialog = new Dialog(MainActivity.this);
@@ -90,14 +87,14 @@ public class MainActivity extends AppCompatActivity
 
                 title = dialog.findViewById(R.id.editTextTitle);
                 title.requestFocus();
-                question =  dialog.findViewById(R.id.editTextQuestion);
-                add =  dialog.findViewById(R.id.buttonAdd);
+                question = dialog.findViewById(R.id.editTextQuestion);
+                add = dialog.findViewById(R.id.buttonAdd);
                 cancel = dialog.findViewById(R.id.buttonCancel);
                 alertDialogIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
-                     //LOAD PICTURE FROM DRAWABLE
+                        //LOAD PICTURE FROM DRAWABLE
 
                         Intent i = new Intent(MainActivity.this, IconActivity.class);
                         startActivityForResult(i, 1);
@@ -121,21 +118,21 @@ public class MainActivity extends AppCompatActivity
                         String title1 = title.getText().toString();
                         String question1 = question.getText().toString();
 
-                        if (title1.isEmpty()){
+                        if (title1.isEmpty()) {
 
-                            Toast.makeText(MainActivity.this,"Please fill title!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Please fill title!", Toast.LENGTH_SHORT).show();
 
 
-                        }else if(question1.isEmpty()){
+                        } else if (question1.isEmpty()) {
 
-                            Toast.makeText(MainActivity.this,"Please fill question!",Toast.LENGTH_SHORT).show();
-                        }else if(result == 0){
+                            Toast.makeText(MainActivity.this, "Please fill question!", Toast.LENGTH_SHORT).show();
+                        } else if (result == 0) {
 
-                            Toast.makeText(MainActivity.this,"Please choose icon!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Please choose icon!", Toast.LENGTH_SHORT).show();
 
-                        }else{
+                        } else {
 
-                            dbAdapter.addItem(title1, question1,result, 0);
+                            dbAdapter.addItem(title1, question1, result, 0);
                             dialog.dismiss();
                             result = 0;
 
@@ -145,7 +142,6 @@ public class MainActivity extends AppCompatActivity
                         mainIcon = (ImageView) findViewById(R.id.imageViewIcon);
                         switchButton = (Switch) findViewById(R.id.switchButton);
                         loadList();
-
 
 
                     }
@@ -174,21 +170,19 @@ public class MainActivity extends AppCompatActivity
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-       // recyclerView.setNestedScrollingEnabled(false);
+        // recyclerView.setNestedScrollingEnabled(false);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(dy > 0 ){
-                    if(fab.isShown()) fab.hide();
+                if (dy > 0) {
+                    if (fab.isShown()) fab.hide();
                 } else {
-                    if(!fab.isShown()) fab.show();
+                    if (!fab.isShown()) fab.show();
                 }
             }
         });
-
-
 
 
     }
@@ -205,9 +199,6 @@ public class MainActivity extends AppCompatActivity
         allItems = dbAdapter.selectAllItems();
         adapter = new RecyclerViewMainAdapter(allItems, this);
         recyclerView.setAdapter(adapter);
-
-
-
 
 
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
@@ -237,19 +228,13 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int which) {
 
 
-
-
                                 dbAdapter.deleteItem(getTitle);
                                 int position = viewHolder.getAdapterPosition();
                                 allItems.remove(position);
                                 //allItems = dbAdapter.selectAllItems();
                                 adapter.notifyItemRemoved(position);
-                               // adapter.notifyItemRangeChanged(position,allItems.size());
+                                // adapter.notifyItemRangeChanged(position,allItems.size());
                                 //loadList();
-
-
-
-
 
 
                             }
@@ -260,13 +245,15 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialogInterface, int i) {
 
 
-                               loadList();
+                                loadList();
+                                /*int position = viewHolder.getAdapterPosition();
 
-                              /*  int position = viewHolder.getAdapterPosition();
 
-                                adapter.notifyItemInserted(position);*/
 
-                                dialogInterface.dismiss();
+                                adapter.notifyItemChanged(position);*/
+
+
+                                dialogInterface.cancel();
                             }
                         })
                         .show();
@@ -342,9 +329,9 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == 1) {
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
 
-                result = data.getIntExtra("result",0);
+                result = data.getIntExtra("result", 0);
                 alertDialogIcon.setImageResource(result);
                 //Toast.makeText(MainActivity.this,String.valueOf(result),Toast.LENGTH_SHORT).show();
 

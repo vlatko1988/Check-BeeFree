@@ -47,7 +47,7 @@ public class SQLite
     }
     public void updateSwitch(int switchButton, String title)
     {
-        mSqLiteDatabase.execSQL("update items set switchButton='" + switchButton + "'where title='" + title + "'");
+        mSqLiteDatabase.execSQL("update items set switchButton='" + switchButton + "' where title= '" + title + "'");
 
     }
 
