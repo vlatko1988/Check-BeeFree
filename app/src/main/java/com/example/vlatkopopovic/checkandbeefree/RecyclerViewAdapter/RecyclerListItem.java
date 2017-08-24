@@ -20,18 +20,10 @@ public class RecyclerListItem {
         this.image = image;
         this.switchButton = switchButton;
     }
-    public RecyclerListItem(String title, String question, int image) {
-        this.title = title;
-        this.question = question;
-        this.image = image;
+    public RecyclerListItem() {
 
     }
-    public RecyclerListItem(String title, String question) {
-        this.title = title;
-        this.question = question;
 
-
-    }
 
     public int getImage() {
         return image;

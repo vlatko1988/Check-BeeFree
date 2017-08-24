@@ -10,8 +10,11 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
 import com.example.vlatkopopovic.checkandbeefree.R;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
@@ -44,7 +47,7 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
         final RecyclerListItem listItem = listItems.get(position);
         holder.title.setText(listItem.getTitle());
         holder.question.setText(listItem.getQuestion());
-        Picasso.with(context).load(listItem.getImage()).into(holder.image);
+        Glide.with(context).load(listItem.getImage()).into(holder.image);
         switch (listItem.getSwitchButton()) {
             case 0:
                 holder.switchButton.setChecked(false);
@@ -56,7 +59,6 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
                 holder.switchButton.setChecked(false);
                 break;
         }
-
 
         holder.switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 

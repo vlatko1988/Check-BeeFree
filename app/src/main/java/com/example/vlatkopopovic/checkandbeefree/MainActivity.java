@@ -1,8 +1,11 @@
 package com.example.vlatkopopovic.checkandbeefree;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
 import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerListItem;
@@ -46,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     Button add, cancel;
     String picturePath;
     Switch switchButton;
+    int result;
 
     String getTitle;
     FloatingActionButton fab;
@@ -57,7 +62,6 @@ public class MainActivity extends AppCompatActivity
         initializeViews();
         initializeDatabase();
         loadList();
-
 
 
     }
@@ -90,6 +94,11 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(View view) {
 
                      //LOAD PICTURE FROM DRAWABLE
+
+                        Intent i = new Intent(MainActivity.this, IconActivity.class);
+                        startActivityForResult(i, 1);
+
+
                     }
                 });
 
@@ -107,13 +116,33 @@ public class MainActivity extends AppCompatActivity
 
                         String title1 = title.getText().toString();
                         String question1 = question.getText().toString();
-                        dbAdapter.addItem(title1, question1, R.drawable.vlatko, 0);
+
+                        if (title1.isEmpty()){
+
+                            Toast.makeText(MainActivity.this,"Please fill title!",Toast.LENGTH_SHORT).show();
+
+
+                        }else if(question1.isEmpty()){
+
+                            Toast.makeText(MainActivity.this,"Please fill question!",Toast.LENGTH_SHORT).show();
+                        }else if(result == 0){
+
+                            Toast.makeText(MainActivity.this,"Please choose icon!",Toast.LENGTH_SHORT).show();
+
+                        }else{
+
+                            dbAdapter.addItem(title1, question1,result, 0);
+                            dialog.dismiss();
+                            result = 0;
+
+                        }
+
 
                         mainIcon = (ImageView) findViewById(R.id.imageViewIcon);
                         switchButton = (Switch) findViewById(R.id.switchButton);
                         loadList();
-                        dialog.dismiss();
-                        picturePath = "";
+
+
 
                     }
                 });
@@ -282,7 +311,22 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+
+                result = data.getIntExtra("result",0);
+                alertDialogIcon.setImageResource(result);
+                //Toast.makeText(MainActivity.this,String.valueOf(result),Toast.LENGTH_SHORT).show();
+
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }
 
 
 
