@@ -33,7 +33,10 @@ import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
 import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerListItem;
 import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerViewMainAdapter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity
@@ -47,15 +50,11 @@ public class MainActivity extends AppCompatActivity
     ImageView alertDialogIcon, mainIcon;
     EditText title, question;
     Button add, cancel;
-
     Switch switchButton;
     int result;
-
     List<RecyclerListItem> allItems;
-
     String getTitle;
     FloatingActionButton fab;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +73,12 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+         fab = (FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
 
 
                 dialog = new Dialog(MainActivity.this);
@@ -87,14 +87,14 @@ public class MainActivity extends AppCompatActivity
 
                 title = dialog.findViewById(R.id.editTextTitle);
                 title.requestFocus();
-                question = dialog.findViewById(R.id.editTextQuestion);
-                add = dialog.findViewById(R.id.buttonAdd);
+                question =  dialog.findViewById(R.id.editTextQuestion);
+                add =  dialog.findViewById(R.id.buttonAdd);
                 cancel = dialog.findViewById(R.id.buttonCancel);
                 alertDialogIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
-                        //LOAD PICTURE FROM DRAWABLE
+                     //LOAD PICTURE FROM DRAWABLE
 
                         Intent i = new Intent(MainActivity.this, IconActivity.class);
                         startActivityForResult(i, 1);
@@ -118,21 +118,21 @@ public class MainActivity extends AppCompatActivity
                         String title1 = title.getText().toString();
                         String question1 = question.getText().toString();
 
-                        if (title1.isEmpty()) {
+                        if (title1.isEmpty()){
 
-                            Toast.makeText(MainActivity.this, "Please fill title!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this,"Please fill title!",Toast.LENGTH_SHORT).show();
 
 
-                        } else if (question1.isEmpty()) {
+                        }else if(question1.isEmpty()){
 
-                            Toast.makeText(MainActivity.this, "Please fill question!", Toast.LENGTH_SHORT).show();
-                        } else if (result == 0) {
+                            Toast.makeText(MainActivity.this,"Please fill question!",Toast.LENGTH_SHORT).show();
+                        }else if(result == 0){
 
-                            Toast.makeText(MainActivity.this, "Please choose icon!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this,"Please choose icon!",Toast.LENGTH_SHORT).show();
 
-                        } else {
+                        }else{
 
-                            dbAdapter.addItem(title1, question1, result, 0);
+                            dbAdapter.addItem(title1, question1,result, 0,getDateTime());
                             dialog.dismiss();
                             result = 0;
 
@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity
                         mainIcon = (ImageView) findViewById(R.id.imageViewIcon);
                         switchButton = (Switch) findViewById(R.id.switchButton);
                         loadList();
+
 
 
                     }
@@ -170,19 +171,21 @@ public class MainActivity extends AppCompatActivity
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // recyclerView.setNestedScrollingEnabled(false);
+       // recyclerView.setNestedScrollingEnabled(false);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0) {
-                    if (fab.isShown()) fab.hide();
+                if(dy > 0 ){
+                    if(fab.isShown()) fab.hide();
                 } else {
-                    if (!fab.isShown()) fab.show();
+                    if(!fab.isShown()) fab.show();
                 }
             }
         });
+
+
 
 
     }
@@ -201,6 +204,9 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setAdapter(adapter);
 
 
+
+
+
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
             @Override
@@ -217,6 +223,7 @@ public class MainActivity extends AppCompatActivity
                 cursor.moveToPosition(viewHolder.getAdapterPosition());
                 getTitle = cursor.getString(1);
 
+
                 //Toast.makeText(MainActivity.this, broj, Toast.LENGTH_SHORT).show();
 
                 new AlertDialog.Builder(MainActivity.this)
@@ -228,13 +235,19 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int which) {
 
 
+
+
                                 dbAdapter.deleteItem(getTitle);
                                 int position = viewHolder.getAdapterPosition();
                                 allItems.remove(position);
                                 //allItems = dbAdapter.selectAllItems();
                                 adapter.notifyItemRemoved(position);
-                                // adapter.notifyItemRangeChanged(position,allItems.size());
+                               // adapter.notifyItemRangeChanged(position,allItems.size());
                                 //loadList();
+
+
+
+
 
 
                             }
@@ -245,15 +258,13 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialogInterface, int i) {
 
 
-                                loadList();
-                                /*int position = viewHolder.getAdapterPosition();
+                               loadList();
 
+                              /*  int position = viewHolder.getAdapterPosition();
 
+                                adapter.notifyItemInserted(position);*/
 
-                                adapter.notifyItemChanged(position);*/
-
-
-                                dialogInterface.cancel();
+                                dialogInterface.dismiss();
                             }
                         })
                         .show();
@@ -263,6 +274,12 @@ public class MainActivity extends AppCompatActivity
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
+    }
+    private String getDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "dd. MMM yyyy. HH:mm:ss", Locale.getDefault());
+        Date date = new Date();
+        return dateFormat.format(date);
     }
 
 
@@ -329,14 +346,15 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
+            if(resultCode == Activity.RESULT_OK){
 
-                result = data.getIntExtra("result", 0);
+                result = data.getIntExtra("result",0);
                 alertDialogIcon.setImageResource(result);
                 //Toast.makeText(MainActivity.this,String.valueOf(result),Toast.LENGTH_SHORT).show();
 
             }
             if (resultCode == Activity.RESULT_CANCELED) {
+
                 //Write your code if there's no result
             }
         }

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class SQLite
 {
     private static final String DATABASE_NAME = "data";
@@ -35,19 +34,27 @@ public class SQLite
 
 
 
-    public void addItem(String title, String question, int image, int switchButton)
+    public void addItem(String title, String question, int image, int switchButton, String date)
     {
         ContentValues cv = new ContentValues();
         cv.put("title", title);
         cv.put("question", question);
         cv.put("image", image);
         cv.put("switchButton", switchButton);
+        cv.put("date", date);
         mSqLiteDatabase.insert("items", null, cv);
 
     }
     public void updateSwitch(int switchButton, String title)
     {
-        mSqLiteDatabase.execSQL("update items set switchButton='" + switchButton + "' where title= '" + title + "'");
+        mSqLiteDatabase.execSQL("update items set switchButton='" + switchButton + "'where title='" + title + "'");
+        //staviti sve u jedan query
+
+    }
+    public void updateDate(String date, String title)
+    {
+        mSqLiteDatabase.execSQL("update items set date='" + date + "'where title='" + title + "'");
+
 
     }
 
@@ -65,9 +72,6 @@ public class SQLite
     }
 
 
-
-
-
     public List<RecyclerListItem> selectAllItems()
     {
 
@@ -78,17 +82,18 @@ public class SQLite
         {
             do
             {
-                RecyclerListItem listItem1 = new RecyclerListItem(cursor.getString(1),cursor.getString(2),cursor.getInt(3),cursor.getInt(4));
+                RecyclerListItem listItem1 = new RecyclerListItem(cursor.getString(1),cursor.getString(2),cursor.getInt(3),cursor.getInt(4),cursor.getString(5));
                 allItems.add(listItem1);
 
             }
             while (cursor.moveToNext());
 
         }
-
+          cursor.close();
         return allItems;
 
     }
+
 
 
 
@@ -102,7 +107,7 @@ public class SQLite
         @Override
         public void onCreate(SQLiteDatabase db)
         {
-            String query = "CREATE TABLE items(id integer primary key autoincrement, title text, question text, image integer, switchButton integer);";
+            String query = "CREATE TABLE items(id integer primary key autoincrement, title text, question text, image integer, switchButton integer, date text);";
             db.execSQL(query);
         }
 

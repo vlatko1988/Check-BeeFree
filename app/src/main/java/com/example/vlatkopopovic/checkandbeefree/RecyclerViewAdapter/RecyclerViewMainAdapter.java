@@ -10,18 +10,17 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
 import com.example.vlatkopopovic.checkandbeefree.R;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.Picasso;
-import java.util.List;
 
-/**
- * Created by Vlatko Popovic on 19-Aug-17.
- */
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+
 
 public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMainAdapter.ViewHolder> {
 
@@ -49,6 +48,7 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
         holder.title.setText(listItem.getTitle());
         holder.question.setText(listItem.getQuestion());
         Glide.with(context).load(listItem.getImage()).into(holder.image);
+        holder.date.setText(listItem.getDate());
         switch (listItem.getSwitchButton()) {
             case 0:
                 holder.switchButton.setChecked(false);
@@ -69,28 +69,32 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
                     Snackbar.make(compoundButton, listItem.getTitle() + " is set to ON", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
                     initializeDatabase();
-                    //holder.switchButton.setChecked(true);
-
                     dbAdapter.updateSwitch(1, listItem.getTitle());
-                    Toast.makeText(context,"cekirano",Toast.LENGTH_SHORT).show();
-
-
+                    dbAdapter.updateDate(getDateTime(),listItem.getTitle());
+                    holder.date.setText(getDateTime());
+                    holder.switchButton.setChecked(true);
 
 
                 } else {
                     Snackbar.make(compoundButton, listItem.getTitle() + " is set to OFF", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
                     initializeDatabase();
-                    //holder.switchButton.setChecked(false);
                     dbAdapter.updateSwitch(0, listItem.getTitle());
-                    Toast.makeText(context,"uncekirano",Toast.LENGTH_SHORT).show();
-
+                    dbAdapter.updateDate(getDateTime(),listItem.getTitle());
+                    holder.date.setText(getDateTime());
+                    holder.switchButton.setChecked(false);
 
                 }
 
             }
         });
 
+    }
+    private String getDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "dd. MMM yyyy. HH:mm:ss", Locale.getDefault());
+        Date date = new Date();
+        return dateFormat.format(date);
     }
 
 
@@ -105,6 +109,7 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
         public TextView question;
         public ImageView image;
         public Switch switchButton;
+        public TextView date;
 
         public ViewHolder(final View itemView) {
             super(itemView);
@@ -112,6 +117,7 @@ public class RecyclerViewMainAdapter extends RecyclerView.Adapter<RecyclerViewMa
             question = itemView.findViewById(R.id.textViewQuestion);
             image = itemView.findViewById(R.id.imageViewIcon);
             switchButton = itemView.findViewById(R.id.switchButton);
+            date = itemView.findViewById(R.id.dateView);
 
 
         }

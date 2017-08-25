@@ -13,6 +13,7 @@ public class RecyclerListItem {
     String question;
     int image;
     int switchButton;
+    String date;
 
     public RecyclerListItem(String title, String question, int image, int switchButton) {
         this.title = title;
@@ -22,6 +23,23 @@ public class RecyclerListItem {
     }
     public RecyclerListItem() {
 
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public RecyclerListItem(String title, String question, int image, int switchButton, String date) {
+        this.title = title;
+        this.question = question;
+        this.image = image;
+        this.switchButton = switchButton;
+
+        this.date = date;
     }
 
 
