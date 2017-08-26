@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.DhcpInfo;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +22,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,12 +39,20 @@ import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
 import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerListItem;
 import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerViewMainAdapter;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.math.BigInteger;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
@@ -62,8 +73,10 @@ public class MainActivity extends AppCompatActivity
     List<RecyclerListItem> allItems;
     String getTitle;
     FloatingActionButton fab;
-    Context context;
-    String ipAddressString;
+    WifiManager wifiManager;
+    boolean wasWifiEnabled;
+    String d;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +84,47 @@ public class MainActivity extends AppCompatActivity
         initializeViews();
         initializeDatabase();
         loadList();
-        //Toast.makeText(context,ipAddressString,Toast.LENGTH_SHORT).show();
+
+
+        final WifiManager manager = (WifiManager) super.getApplicationContext().getSystemService(WIFI_SERVICE);
+        final DhcpInfo dhcp = manager.getDhcpInfo();
+        final String address = Formatter.formatIpAddress(dhcp.gateway);
+
+        WifiInfo wifiinfo = manager.getConnectionInfo();
+        byte[] myIPAddress = BigInteger.valueOf(wifiinfo.getIpAddress()).toByteArray();
+        // you must reverse the byte array before conversion. Use Apache's commons library
+        ArrayUtils.reverse(myIPAddress);
+        InetAddress myInetIP = null;
+        try {
+            myInetIP = InetAddress.getByAddress(myIPAddress);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        String myIP = myInetIP.getHostAddress();
+
+
+
+        Toast.makeText(MainActivity.this, address, Toast.LENGTH_LONG).show();
+
+
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wasWifiEnabled = (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED || wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING);
+        WifiHelper.setWifiListener(new WifiHelper.WifiConnectionChange() {
+            @Override
+            public void wifiConnected(boolean connected) {
+                //Do logic here
+                if (connected == true) {
+                    Toast.makeText(MainActivity.this, "Konektovan", Toast.LENGTH_LONG).show();
+
+                } else {
+                    Toast.makeText(MainActivity.this, "Nije konektovan", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+
+
+
 
 
     }
@@ -82,12 +135,11 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-         fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 
 
                 dialog = new Dialog(MainActivity.this);
@@ -96,14 +148,14 @@ public class MainActivity extends AppCompatActivity
 
                 title = dialog.findViewById(R.id.editTextTitle);
                 title.requestFocus();
-                question =  dialog.findViewById(R.id.editTextQuestion);
-                add =  dialog.findViewById(R.id.buttonAdd);
+                question = dialog.findViewById(R.id.editTextQuestion);
+                add = dialog.findViewById(R.id.buttonAdd);
                 cancel = dialog.findViewById(R.id.buttonCancel);
                 alertDialogIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
-                     //LOAD PICTURE FROM DRAWABLE
+                        //LOAD PICTURE FROM DRAWABLE
 
                         Intent i = new Intent(MainActivity.this, IconActivity.class);
                         startActivityForResult(i, 1);
@@ -127,21 +179,21 @@ public class MainActivity extends AppCompatActivity
                         String title1 = title.getText().toString();
                         String question1 = question.getText().toString();
 
-                        if (title1.isEmpty()){
+                        if (title1.isEmpty()) {
 
-                            Toast.makeText(MainActivity.this,"Please fill title!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Please fill title!", Toast.LENGTH_SHORT).show();
 
 
-                        }else if(question1.isEmpty()){
+                        } else if (question1.isEmpty()) {
 
-                            Toast.makeText(MainActivity.this,"Please fill question!",Toast.LENGTH_SHORT).show();
-                        }else if(result == 0){
+                            Toast.makeText(MainActivity.this, "Please fill question!", Toast.LENGTH_SHORT).show();
+                        } else if (result == 0) {
 
-                            Toast.makeText(MainActivity.this,"Please choose icon!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Please choose icon!", Toast.LENGTH_SHORT).show();
 
-                        }else{
+                        } else {
 
-                            dbAdapter.addItem(title1, question1,result, 0,getDateTime());
+                            dbAdapter.addItem(title1, question1, result, 0, getDateTime());
                             dialog.dismiss();
                             result = 0;
 
@@ -151,7 +203,6 @@ public class MainActivity extends AppCompatActivity
                         mainIcon = (ImageView) findViewById(R.id.imageViewIcon);
                         switchButton = (Switch) findViewById(R.id.switchButton);
                         loadList();
-
 
 
                     }
@@ -180,21 +231,19 @@ public class MainActivity extends AppCompatActivity
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-       // recyclerView.setNestedScrollingEnabled(false);
+        // recyclerView.setNestedScrollingEnabled(false);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(dy > 0 ){
-                    if(fab.isShown()) fab.hide();
+                if (dy > 0) {
+                    if (fab.isShown()) fab.hide();
                 } else {
-                    if(!fab.isShown()) fab.show();
+                    if (!fab.isShown()) fab.show();
                 }
             }
         });
-
-
 
 
     }
@@ -211,9 +260,6 @@ public class MainActivity extends AppCompatActivity
         allItems = dbAdapter.selectAllItems();
         adapter = new RecyclerViewMainAdapter(allItems, this);
         recyclerView.setAdapter(adapter);
-
-
-
 
 
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
@@ -244,19 +290,13 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int which) {
 
 
-
-
                                 dbAdapter.deleteItem(getTitle);
                                 int position = viewHolder.getAdapterPosition();
                                 allItems.remove(position);
                                 //allItems = dbAdapter.selectAllItems();
                                 adapter.notifyItemRemoved(position);
-                               // adapter.notifyItemRangeChanged(position,allItems.size());
+                                // adapter.notifyItemRangeChanged(position,allItems.size());
                                 //loadList();
-
-
-
-
 
 
                             }
@@ -267,7 +307,7 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialogInterface, int i) {
 
 
-                               loadList();
+                                loadList();
 
                               /*  int position = viewHolder.getAdapterPosition();
 
@@ -284,6 +324,7 @@ public class MainActivity extends AppCompatActivity
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
     }
+
     private String getDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "dd. MMM yyyy. HH:mm:ss", Locale.getDefault());
@@ -355,9 +396,9 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == 1) {
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
 
-                result = data.getIntExtra("result",0);
+                result = data.getIntExtra("result", 0);
                 alertDialogIcon.setImageResource(result);
                 //Toast.makeText(MainActivity.this,String.valueOf(result),Toast.LENGTH_SHORT).show();
 
@@ -370,9 +411,28 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
-
+    public String getWifiApIpAddress() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en
+                    .hasMoreElements(); ) {
+                NetworkInterface intf = en.nextElement();
+                if (intf.getName().contains("wl") || (intf.getName().contains("ap"))) {
+                    for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr
+                            .hasMoreElements(); ) {
+                        InetAddress inetAddress = enumIpAddr.nextElement();
+                        if (!inetAddress.isLoopbackAddress()
+                                && (inetAddress.getAddress().length == 4)) {
+                            //Log.d(TAG, inetAddress.getHostAddress());
+                            return inetAddress.getHostAddress();
+                        }
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            //Log.e(TAG, ex.toString());
+        }
+        return null;
+    }
 
 
    /* @Override
