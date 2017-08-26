@@ -2,9 +2,11 @@ package com.example.vlatkopopovic.checkandbeefree;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity
     List<RecyclerListItem> allItems;
     String getTitle;
     FloatingActionButton fab;
+WifiManager wifiManager;
+boolean wasWifiEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,27 @@ public class MainActivity extends AppCompatActivity
         initializeViews();
         initializeDatabase();
         loadList();
+
+
+
+
+       wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wasWifiEnabled = (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED || wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING);
+        WifiHelper.setWifiListener(new WifiHelper.WifiConnectionChange()
+        {
+            @Override
+            public void wifiConnected(boolean connected)
+            {
+               //Do logic here
+                if (connected == true){
+                    Toast.makeText(MainActivity.this,"Konektovan",Toast.LENGTH_LONG).show();
+
+                }else{
+                    Toast.makeText(MainActivity.this,"Nije konektovan",Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
 
 
     }
@@ -359,6 +384,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
+
 
 
 
