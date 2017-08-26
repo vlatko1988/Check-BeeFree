@@ -22,7 +22,6 @@ public class IconActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_icon);
 
-       // int[] icons = {R.drawable.vlatko, R.drawable.insta, R.drawable.insta, R.drawable.vlatko, R.drawable.vlatko, R.drawable.rakic};
 
         final List<RecyclerIconList> allItems = new ArrayList<>();
         //first we create an array list to hold all the resources ids
@@ -40,7 +39,7 @@ public class IconActivity extends AppCompatActivity {
         for (int imgResourceId : imageListId) {
             //do whatever you want here
             allItems.add(new RecyclerIconList(imgResourceId));
-            //Toast.makeText(IconActivity.this,String.valueOf(imgResourceId),Toast.LENGTH_SHORT).show();
+
         }
 
 
@@ -49,32 +48,11 @@ public class IconActivity extends AppCompatActivity {
         int numberOfColumns = 3;
         recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
 
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setNestedScrollingEnabled(false);
-
-
-        //RecyclerIconList listItem1 = new RecyclerIconList(R.drawable.vlatko);
-        //allItems.add(listItem1);
-
-        /*for (int i = 0; i < icons.length; i++) {
-
-            allItems.add(new RecyclerIconList(icons[i]));
-            //Toast.makeText(IconActivity.this,String.valueOf(icons),Toast.LENGTH_SHORT).show();
-        }*/
 
 
         adapter = new RecyclerIconAdapter(allItems, this);
         recyclerView.setAdapter(adapter);
-
-
-       /* Intent returnIntent = new Intent();
-        //returnIntent.putExtra("result",result);
-        setResult(Activity.RESULT_OK,returnIntent);
-        finish();*/
-
-      /*  Intent myIntent = new Intent(this, MainActivity.class);
-        myIntent.putExtra("intVariableName", intValue);
-        startActivity(myIntent);*/
 
 
     }

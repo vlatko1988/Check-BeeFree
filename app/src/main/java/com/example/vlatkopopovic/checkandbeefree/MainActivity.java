@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,10 @@ import com.example.vlatkopopovic.checkandbeefree.Database.SQLite;
 import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerListItem;
 import com.example.vlatkopopovic.checkandbeefree.RecyclerViewAdapter.RecyclerViewMainAdapter;
 
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -57,9 +62,8 @@ public class MainActivity extends AppCompatActivity
     List<RecyclerListItem> allItems;
     String getTitle;
     FloatingActionButton fab;
-WifiManager wifiManager;
-boolean wasWifiEnabled;
-
+    Context context;
+    String ipAddressString;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,27 +71,7 @@ boolean wasWifiEnabled;
         initializeViews();
         initializeDatabase();
         loadList();
-
-
-
-
-       wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wasWifiEnabled = (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED || wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING);
-        WifiHelper.setWifiListener(new WifiHelper.WifiConnectionChange()
-        {
-            @Override
-            public void wifiConnected(boolean connected)
-            {
-               //Do logic here
-                if (connected == true){
-                    Toast.makeText(MainActivity.this,"Konektovan",Toast.LENGTH_LONG).show();
-
-                }else{
-                    Toast.makeText(MainActivity.this,"Nije konektovan",Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
+        //Toast.makeText(context,ipAddressString,Toast.LENGTH_SHORT).show();
 
 
     }
@@ -384,8 +368,6 @@ boolean wasWifiEnabled;
             }
         }
     }
-
-
 
 
 
