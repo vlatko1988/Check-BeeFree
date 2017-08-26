@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity
         loadList();
 
 
-        final WifiManager manager = (WifiManager) super.getApplicationContext().getSystemService(WIFI_SERVICE);
+     /*   final WifiManager manager = (WifiManager) super.getApplicationContext().getSystemService(WIFI_SERVICE);
         final DhcpInfo dhcp = manager.getDhcpInfo();
         final String address = Formatter.formatIpAddress(dhcp.gateway);
 
@@ -104,9 +104,9 @@ public class MainActivity extends AppCompatActivity
 
 
 
-        Toast.makeText(MainActivity.this, address, Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivity.this, address, Toast.LENGTH_LONG).show();*/
 
-
+/*
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wasWifiEnabled = (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED || wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING);
         WifiHelper.setWifiListener(new WifiHelper.WifiConnectionChange() {
@@ -114,14 +114,14 @@ public class MainActivity extends AppCompatActivity
             public void wifiConnected(boolean connected) {
                 //Do logic here
                 if (connected == true) {
-                    Toast.makeText(MainActivity.this, "Konektovan", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MainActivity.this, "Konektovan", Toast.LENGTH_LONG).show();
 
                 } else {
-                    Toast.makeText(MainActivity.this, "Nije konektovan", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MainActivity.this, "Nije konektovan", Toast.LENGTH_LONG).show();
                 }
 
             }
-        });
+        });*/
 
 
 

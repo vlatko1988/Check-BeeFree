@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by Aleksandar on 26-Aug-17.
@@ -20,11 +21,13 @@ public class ConnectivityReceiver extends BroadcastReceiver
         NetworkInfo netInfo = conMan.getActiveNetworkInfo();
         if (netInfo != null && netInfo.getType() == ConnectivityManager.TYPE_WIFI)
         {
-            Log.d("WifiReceiver", "Have Wifi Connection");
+            Toast.makeText(context, "Konektovan", Toast.LENGTH_LONG).show();
+            Log.i("WifiReceiver", "Have Wifi Connection");
             WifiHelper.setWifiConnected(true);
         } else
         {
-            Log.d("WifiReceiver", "Don't have Wifi Connection");
+            Toast.makeText(context, "Nije konektovan", Toast.LENGTH_LONG).show();
+            Log.i("WifiReceiver", "Don't have Wifi Connection");
             WifiHelper.setWifiConnected(false);
         }
 
