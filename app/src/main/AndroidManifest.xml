@@ -38,6 +38,8 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>-->
+        <service android:name=".BackgroundJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
     </application>
 

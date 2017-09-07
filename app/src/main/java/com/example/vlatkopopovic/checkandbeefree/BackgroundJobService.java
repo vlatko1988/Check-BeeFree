@@ -1,10 +1,12 @@
 package com.example.vlatkopopovic.checkandbeefree;
 
 import android.app.job.JobParameters;
+
 import android.app.job.JobService;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -14,13 +16,13 @@ import android.widget.Toast;
  * Created by Aleksandar on 07-Sep-17.
  */
 
-public class BackgroundJobService extends JobService{
+public class BackgroundJobService extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
 
 
         mJobHandler.sendMessage( Message.obtain( mJobHandler, 1, jobParameters ) );
-
+        Log.i("WifiReceiver", "Have Wifi Connection");
 
 
         return true;
@@ -34,7 +36,7 @@ public class BackgroundJobService extends JobService{
 
 
 
-    private Handler mJobHandler = new Handler(new Handler.Callback() {
+    /*private Handler mJobHandler = new Handler(new Handler.Callback() {
 
         @Override
         public boolean handleMessage( Message msg ) {
@@ -50,6 +52,18 @@ public class BackgroundJobService extends JobService{
                 WifiHelper.setWifiConnected(false);
             }
 
+            jobFinished( (JobParameters) msg.obj, false );
+            return true;
+        }
+
+    } );*/
+    private Handler mJobHandler = new Handler(new Handler.Callback() {
+
+        @Override
+        public boolean handleMessage( Message msg ) {
+            Toast.makeText(BackgroundJobService.this,
+                    "JobService task running", Toast.LENGTH_LONG )
+                    .show();
             jobFinished( (JobParameters) msg.obj, false );
             return true;
         }

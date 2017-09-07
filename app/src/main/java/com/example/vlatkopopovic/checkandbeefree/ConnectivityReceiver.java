@@ -17,9 +17,14 @@ import android.widget.Toast;
 public class ConnectivityReceiver extends BroadcastReceiver {
     //ConnectivityReceiver cr = new ConnectivityReceiver();
 
+    //ConnectivityReceiver cr = new ConnectivityReceiver();
+    //IntentFilter filter =  new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
-
+         //context.registerReceiver(this,filter);
+/*
         ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMan.getActiveNetworkInfo();
         if (netInfo != null && netInfo.getType() == ConnectivityManager.TYPE_WIFI) {
@@ -30,7 +35,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
             Toast.makeText(context, "Nije konektovan", Toast.LENGTH_LONG).show();
             Log.i("WifiReceiver", "Don't have Wifi Connection");
             WifiHelper.setWifiConnected(false);
-        }
+        }*/
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             context.registerReceiver(cr, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         }*/

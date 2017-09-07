@@ -2,7 +2,12 @@ package com.example.vlatkopopovic.checkandbeefree;
 
 import android.app.Activity;
 import android.app.Dialog;
+
+
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +18,7 @@ import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -76,6 +82,7 @@ public class MainActivity extends AppCompatActivity
     boolean wasWifiEnabled;
     String d;
     private BroadcastReceiver br;
+    JobScheduler mJobScheduler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +92,30 @@ public class MainActivity extends AppCompatActivity
         initializeDatabase();
         loadList();
 
-        IntentFilter intentFilter = new IntentFilter();
+        /*IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(new ConnectivityReceiver(), intentFilter);
+        registerReceiver(new ConnectivityReceiver(), intentFilter);*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            mJobScheduler = (JobScheduler)
+                    getSystemService(JOB_SCHEDULER_SERVICE);
+            JobInfo.Builder builder = new JobInfo.Builder(1,
+                    new ComponentName(getPackageName(),
+                            BackgroundJobService.class.getName())).setMinimumLatency(5000);
+            mJobScheduler.schedule(builder.build());
+        }
 
+        mJobScheduler = (JobScheduler)
+                getSystemService(JOB_SCHEDULER_SERVICE);
+        JobInfo.Builder builder = new JobInfo.Builder(1,
+                new ComponentName(getPackageName(),
+                        BackgroundJobService.class.getName())).setPeriodic(3000);
+        mJobScheduler.schedule(builder.build());
+
+        /*if( mJobScheduler.schedule( builder.build() ) <= 0 ) {
+            //If something goes wrong
+            //Toast.makeText(this, "Konektovan", Toast.LENGTH_LONG).show();
+            mJobScheduler.cancelAll();
+        }*/
 
 
 
@@ -134,11 +161,53 @@ public class MainActivity extends AppCompatActivity
         });*/
 
 
+    }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
 
     }
 
+
+    @Override
+    protected void onStop() {
+
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+             JobInfo.Builder builder = new JobInfo.Builder(1,
+                     new ComponentName(getPackageName(),
+                             BackgroundJobService.class.getName())).setMinimumLatency(5000);
+             mJobScheduler.schedule(builder.build());
+        }
+
+        mJobScheduler = (JobScheduler)
+                getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        JobInfo.Builder builder = new JobInfo.Builder(1,
+                new ComponentName(getPackageName(),
+                        BackgroundJobService.class.getName())).setPeriodic(10000);
+        mJobScheduler.schedule(builder.build());
+        //builder.setOverrideDeadline(10000);
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            JobInfo.Builder builder = new JobInfo.Builder(1,
+                    new ComponentName(getPackageName(),
+                            BackgroundJobService.class.getName())).setMinimumLatency(5000);
+            mJobScheduler.schedule(builder.build());
+        }
+
+        mJobScheduler = (JobScheduler)
+                getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        JobInfo.Builder builder = new JobInfo.Builder(1,
+                new ComponentName(getPackageName(),
+                        BackgroundJobService.class.getName())).setPeriodic(10000);
+        mJobScheduler.schedule(builder.build());
+        super.onDestroy();
+    }
 
     private void initializeViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
