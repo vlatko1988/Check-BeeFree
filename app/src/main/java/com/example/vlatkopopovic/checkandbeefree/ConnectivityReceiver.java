@@ -15,6 +15,7 @@ import android.widget.Toast;
  */
 
 public class ConnectivityReceiver extends BroadcastReceiver {
+    //ConnectivityReceiver cr = new ConnectivityReceiver();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -30,6 +31,9 @@ public class ConnectivityReceiver extends BroadcastReceiver {
             Log.i("WifiReceiver", "Don't have Wifi Connection");
             WifiHelper.setWifiConnected(false);
         }
-
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            context.registerReceiver(cr, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        }*/
     }
+
 }
