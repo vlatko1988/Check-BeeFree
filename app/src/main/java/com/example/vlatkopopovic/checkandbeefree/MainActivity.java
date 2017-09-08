@@ -20,6 +20,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -96,20 +97,22 @@ public class MainActivity extends AppCompatActivity
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(new ConnectivityReceiver(), intentFilter);*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+            mJobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            JobInfo.Builder builder = new JobInfo.Builder(1, new ComponentName(getPackageName(), BackgroundJobService.class.getName())).setMinimumLatency(5000);
+            //builder.setExtras(bundle).build();
+            mJobScheduler.schedule(builder.build());
+        }else {
             mJobScheduler = (JobScheduler)
                     getSystemService(JOB_SCHEDULER_SERVICE);
             JobInfo.Builder builder = new JobInfo.Builder(1,
                     new ComponentName(getPackageName(),
-                            BackgroundJobService.class.getName())).setMinimumLatency(5000);
+                            BackgroundJobService.class.getName())).setPeriodic(5000);
             mJobScheduler.schedule(builder.build());
+
         }
 
-        mJobScheduler = (JobScheduler)
-                getSystemService(JOB_SCHEDULER_SERVICE);
-        JobInfo.Builder builder = new JobInfo.Builder(1,
-                new ComponentName(getPackageName(),
-                        BackgroundJobService.class.getName())).setPeriodic(3000);
-        mJobScheduler.schedule(builder.build());
+
 
         /*if( mJobScheduler.schedule( builder.build() ) <= 0 ) {
             //If something goes wrong
@@ -172,21 +175,26 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
-         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-             JobInfo.Builder builder = new JobInfo.Builder(1,
-                     new ComponentName(getPackageName(),
-                             BackgroundJobService.class.getName())).setMinimumLatency(5000);
-             mJobScheduler.schedule(builder.build());
+            mJobScheduler = (JobScheduler)
+                    getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            JobInfo.Builder builder = new JobInfo.Builder(1,
+                    new ComponentName(getPackageName(),
+                            BackgroundJobService.class.getName())).setMinimumLatency(5000);
+            //builder.setExtras(bundle).build();
+
+            mJobScheduler.schedule(builder.build());
+        }else {
+            mJobScheduler = (JobScheduler)
+                    getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            JobInfo.Builder builder = new JobInfo.Builder(1,
+                    new ComponentName(getPackageName(),
+                            BackgroundJobService.class.getName())).setPeriodic(5000);
+
+            mJobScheduler.schedule(builder.build());
+
         }
-
-        mJobScheduler = (JobScheduler)
-                getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        JobInfo.Builder builder = new JobInfo.Builder(1,
-                new ComponentName(getPackageName(),
-                        BackgroundJobService.class.getName())).setPeriodic(10000);
-        mJobScheduler.schedule(builder.build());
-        //builder.setOverrideDeadline(10000);
         super.onStop();
     }
 
@@ -194,18 +202,25 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+            mJobScheduler = (JobScheduler)
+                    getSystemService(Context.JOB_SCHEDULER_SERVICE);
             JobInfo.Builder builder = new JobInfo.Builder(1,
                     new ComponentName(getPackageName(),
                             BackgroundJobService.class.getName())).setMinimumLatency(5000);
-            mJobScheduler.schedule(builder.build());
-        }
+            //builder.setExtras(bundle).build();
 
-        mJobScheduler = (JobScheduler)
-                getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        JobInfo.Builder builder = new JobInfo.Builder(1,
-                new ComponentName(getPackageName(),
-                        BackgroundJobService.class.getName())).setPeriodic(10000);
-        mJobScheduler.schedule(builder.build());
+            mJobScheduler.schedule(builder.build());
+        }else {
+            mJobScheduler = (JobScheduler)
+                    getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            JobInfo.Builder builder = new JobInfo.Builder(1,
+                    new ComponentName(getPackageName(),
+                            BackgroundJobService.class.getName())).setPeriodic(5000);
+
+            mJobScheduler.schedule(builder.build());
+
+        }
         super.onDestroy();
     }
 
