@@ -93,10 +93,28 @@ public class MainActivity extends AppCompatActivity
         initializeDatabase();
         loadList();
 
+    sheduleJob(MainActivity.this);
+
+        /*ComponentName componentName = new ComponentName(this, BackgroundJobService.class);
+        JobInfo jobInfo = new JobInfo.Builder(12, componentName)
+                .setRequiresCharging(true)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler)getSystemService(JOB_SCHEDULER_SERVICE);
+        int resultCode = jobScheduler.schedule(jobInfo);
+        if (resultCode == JobScheduler.RESULT_SUCCESS) {
+            Log.i("KURCINA", "Job scheduled!");
+        } else {
+            Log.i("KURCINA", "Job not scheduled");
+        }
+*/
+
+
         /*IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(new ConnectivityReceiver(), intentFilter);*/
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
             mJobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
             JobInfo.Builder builder = new JobInfo.Builder(1, new ComponentName(getPackageName(), BackgroundJobService.class.getName())).setMinimumLatency(5000);
@@ -110,7 +128,7 @@ public class MainActivity extends AppCompatActivity
                             BackgroundJobService.class.getName())).setPeriodic(5000);
             mJobScheduler.schedule(builder.build());
 
-        }
+        }*/
 
 
 
@@ -527,7 +545,17 @@ public class MainActivity extends AppCompatActivity
         }
         return null;
     }
+public static final int MY_BACKGROUND_JOB = 0;
+    public static void sheduleJob (Context context){
 
+        JobScheduler js = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        JobInfo job = new JobInfo.Builder(MY_BACKGROUND_JOB,
+                new ComponentName(context, BackgroundJobService.class))
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .build();
+        js.schedule(job);
+
+    }
 
    /* @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
